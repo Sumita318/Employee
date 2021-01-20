@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="EmployeeDBModelStoreContainer" CdmEntityContainer="EmployeeDBEntities">
+    <EntitySetMapping Name="tblEducations">
+      <EntityTypeMapping TypeName="EmployeeDBModel.tblEducation">
+        <MappingFragment StoreEntitySet="tblEducation">
+          <ScalarProperty Name="EducationId" ColumnName="EducationId" />
+          <ScalarProperty Name="Degree" ColumnName="Degree" />
+          <ScalarProperty Name="College" ColumnName="College" />
+          <ScalarProperty Name="University" ColumnName="University" />
+          <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="tblEmployeeInfoes">
+      <EntityTypeMapping TypeName="EmployeeDBModel.tblEmployeeInfo">
+        <MappingFragment StoreEntitySet="tblEmployeeInfo">
+          <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+          <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+          <ScalarProperty Name="EmployeeAddress" ColumnName="EmployeeAddress" />
+          <ScalarProperty Name="ContactNo" ColumnName="ContactNo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

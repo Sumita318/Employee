@@ -1,0 +1,325 @@
+﻿@model EmployeeRecord.ViewModel.EmployeeViewModel
+@{
+    ViewBag.Title = "Index";
+}
+<div class="col-sm-12" style="text-align:right;display:inline;padding:10px;">
+    <button class="btn btn-primary" onclick="addNew()">Add New Employee Detail</button>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="datatable table table-hover table-center mb-0">
+                <tbody>
+                    @foreach (var item in ViewBag.employee)
+                    {
+                        <tr>
+                            <td>Empoyee Name : <b style="color:blue;">@item.EmployeeName</b></td>
+                            <td>Empoyee Address : <b style="color:blue;">@item.EmployeeAddress</b></td>
+                            <td>Empoyee Contact : <b style="color:blue;">@item.ContactNo</b></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th>S.n</th>
+                                            <th>Degree</th>
+                                            <th>College</th>
+                                            <th>University</th>
+                                            <th class="text-right">Action</th>
+                                            @{ int sn = 0;}
+                                            @foreach (var time in item.tblEducations)
+                                            {
+                                                sn++;
+                                             <tr>
+                                                <td>@sn</td>
+                                                <td>@time.Degree</td>
+                                                <td>@time.College</td>
+                                                <td>@time.University</td>
+                                                <td></td>
+                                             </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+
+                                </td>
+                            </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="NewEducationModal">
+    <div class="modal-dialog modal-lg" style="width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Add New Time Schedule</h4>
+
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+            </div>
+            <form id="NewOrderForm">
+                <div class="modal-body">
+                    <div class="row form-row">
+                        <div class="col-12 col-sm-4" style="display:inline;">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EmployeeName, new { @class = "control-label required" })
+                                @Html.TextBoxFor(model => model.EmployeeName, new { @class = "form-control", @placeholder = "Enter Doctor name", id = "EmpName" })
+                                @Html.ValidationMessageFor(model => model.EmployeeName, "", new { @class = "text-danger" })
+                                <span class="error">day name required</span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4" style="display:inline;">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EmployeeAddress, new { @class = "control-label required" })
+                                @Html.TextBoxFor(model => model.EmployeeAddress, new { @class = "form-control", @placeholder = "Enter Doctor name", id = "EmpAddress" })
+                                @Html.ValidationMessageFor(model => model.EmployeeAddress, "", new { @class = "text-danger" })
+                                <span class="error">Duration required</span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4" style="display:inline;">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ContactNo, new { @class = "control-label required" })
+                                @Html.TextBoxFor(model => model.ContactNo, new { @class = "form-control", @placeholder = "Enter Doctor name", id = "EmpContactNo" })
+                                @Html.ValidationMessageFor(model => model.ContactNo, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="details" style="padding-top:0px;">
+                        <table>
+                            <tr>
+                                <td>Degree</td>
+                                <td>College</td>
+                                <td>University</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    @Html.TextBoxFor(model => model.Education.Degree, new {@class = "form-control", id = "degree" })
+                                    @*<input type="text" id="starttime" class="form-control timepicker" />*@
+                                    <span class="error">Degree Name required</span>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(model => model.Education.College, new {@class = "form-control", id = "college" })
+                                    <span class="error">College name required</span>
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(model => model.Education.University, new {@class = "form-control", id = "university" })
+                                    <span class="error">University name required</span>
+                                </td>
+                                <td>
+                                    <a href="#" id="add"><i class="fa fa-plus"></i> Add More</a>
+                                    @*<input type="button" id="add" value="add" />*@
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div id="EducationDetails" class="tablecontainer">
+
+                        </div>
+                        <div style="padding:10px 0px; text-align:left">
+                            <input id="submit" type="button" value="Save" style="padding:10px 20px" class="btn btn-primary" />
+                            <button type="reset" class="btn btn-default" data-dismiss="modal">Close</button>
+                            @*<button id="saveOrder" type="submit" class="btn btn-danger">Save Order</button>*@
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+@section Scripts{
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+        function addNew() {
+            $("#NewEducationModal").modal();
+        }
+        $(document).ready(function () {
+            var EducationDetails = [];
+            //Add button click function
+            $('#add').click(function () {
+                //Check validation of order item
+                var isValidItem = true;
+                if ($('#degree').val().trim() == '') {
+                    isValidItem = false;
+                    $('#degree').siblings('span.error').css('visibility', 'visible');
+                }
+                else {
+                    $('#degree').siblings('span.error').css('visibility', 'hidden');
+                }
+
+                if ($('#college').val().trim() == '') {
+                    isValidItem = false;
+                    $('#college').siblings('span.error').css('visibility', 'visible');
+                }
+                else {
+                    $('#college').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#university').val().trim() == '') {
+                    isValidItem = false;
+                    $('#university').siblings('span.error').css('visibility', 'visible');
+                }
+                else {
+                    $('#university').siblings('span.error').css('visibility', 'hidden');
+                }
+                //Add item to list if valid
+                if (isValidItem) {
+                    EducationDetails.push({
+                        Degree: $('#degree').val().trim(),
+                        College: ($('#college').val().trim()),
+                        University: ($('#university').val().trim()),
+                    });
+
+                    //Clear fields
+                    $('#degree').val('').focus();
+                    $('#college').val('');
+                    $('#university').val('');
+
+                }
+                //populate Education details
+                GeneratedItemsTable();
+
+            });
+            //Save button click function
+            $('#submit').click(function () {
+                //validation of order
+                var isAllValid = true;
+                if (EducationDetails.length == 0) {
+                    $('#EducationDetails').html('<span style="color:red;">Please add eduaction details</span>');
+                    isAllValid = false;
+                }
+                if ($('#EmpName').val().trim() == '') {
+                    $('#EmpName').siblings('span.error').css('visibility', 'visible');
+                    isAllValid = false;
+                }
+                else {
+                    $('#EmpName').siblings('span.error').css('visibility', 'hidden');
+                }
+                if ($('#EmpAddress').val().trim() == '') {
+                    $('#EmpAddress').siblings('span.error').css('visibility', 'visible');
+                    isAllValid = false;
+                }
+                else {
+                    $('#EmpAddress').siblings('span.error').css('visibility', 'hidden');
+                }
+
+                if ($('#EmpContactNo').val().trim() == '') {
+                    $('#EmpContactNo').siblings('span.error').css('visibility', 'visible');
+                    isAllValid = false;
+                }
+                else {
+                    $('#EmpContactNo').siblings('span.error').css('visibility', 'hidden');
+                }
+
+                //Save if valid
+                if (isAllValid) {
+                    var data = {
+                        EmployeeName: $('#EmpName').val().trim(),
+                        EmployeeAddress: $('#EmpAddress').val().trim(),
+                        ContactNo: $('#EmpContactNo').val().trim(),
+                        EducationDetails: EducationDetails
+                    }
+
+                    $(this).val('Please wait...');
+
+                    $.ajax({
+                        url: '/Employee/SaveEducationDetails',
+                        type: "POST",
+                        data: JSON.stringify(data),
+                        dataType: "JSON",
+                        contentType: "application/json",
+                        success: function (d) {
+                            //check is successfully save to database
+                            if (d.status == true) {
+                                //will send status from server side
+                                alert('Successfully done.');
+                                //clear form
+                                EducationDetails = [];
+                                $('#EmpName').val('');
+                                $('#EmpAddress').val('');
+                                $('#EmpContactNo').val('');
+                                $('#EducationDetails').empty();
+                            }
+                            else {
+                                alert('Failed');
+                            }
+                            $('#submit').val('Save');
+                        },
+                        error: function () {
+                            alert('Error. Please try again.');
+                            $('#submit').val('Save');
+                        }
+                    });
+                }
+
+            });
+            //function for show added items in table
+            function GeneratedItemsTable() {
+                if (EducationDetails.length > 0) {
+                    var $table = $('<table/>');
+                    $table.append('<thead><tr><th>Degree</th><th>College</th><th>University</th><th></th></tr></thead>');
+                    var $tbody = $('<tbody/>');
+                    $.each(EducationDetails, function (i, val) {
+                        var $row = $('<tr/>');
+                        $row.append($('<td/>').html(val.Degree));
+                        $row.append($('<td/>').html(val.College));
+                        $row.append($('<td/>').html(val.University));
+                        var $remove = $('<a href="#">Remove</a>');
+                        $remove.click(function (e) {
+                            e.preventDefault();
+                            EducationDetails.splice(i, 1);
+                            GeneratedItemsTable();
+                        });
+                        $row.append($('<td/>').html($remove));
+                        $tbody.append($row);
+                    });
+                    console.log("current", EducationDetails);
+                    $table.append($tbody);
+                    $('#EducationDetails').html($table);
+                }
+                else {
+                    $('#EducationDetails').html('');
+                }
+            }
+        });
+
+    </script>
+}
+<style>
+    /*Adding some css for looks good*/
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+
+    /*css for table*/
+    .container td {
+        vertical-align: top;
+    }
+
+    .tablecontainer table {
+        width: 100%;
+        border-collapse: collapse;
+        border-top: 1px solid #BFAEAE;
+        border-right: 1px solid #BFAEAE;
+    }
+
+    .tablecontainer th {
+        border-bottom: 2px solid #BFAEAE !important;
+    }
+
+    .tablecontainer th, .tablecontainer td {
+        text-align: left;
+        border-left: 1px solid #BFAEAE;
+        padding: 5px;
+        border-bottom: 1px solid #BFAEAE;
+    }
+
+    .ui-widget {
+        font-size: 12px !important;
+    }
+</style>
